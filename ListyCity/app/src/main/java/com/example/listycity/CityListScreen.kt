@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedTextField
@@ -22,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,6 +34,7 @@ fun CityListScreen(
     cities: List<City>,
     onAddCity: (City) -> Unit,
     onUpdateCity: (City, City) -> Unit,
+    onDeleteCity: (City) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var newCityName by remember { mutableStateOf("") }
@@ -102,6 +105,8 @@ fun CityListScreen(
                 ) {
                     Text("ADD CITY")
                 }
+
+
             }
         }
         if (selectedCity != null) {
@@ -153,9 +158,14 @@ fun CityListScreen(
                 ) {
                     Text("UPDATE CITY")
                 }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+
             }
         }
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
+
+        LazyColumn(modifier = Modifier.weight(1f).fillMaxSize()) {
             itemsIndexed(cities) { index, city ->
                 CityRow(
                     city = city,
@@ -171,6 +181,26 @@ fun CityListScreen(
                 if (index < cities.lastIndex) {
                     HorizontalDivider()
                 }
+            }
+        }
+
+        if(selectedCity != null) {
+            Button(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Red
+                ),
+                onClick = {
+                    val cityToDelete = selectedCity
+                    if (cityToDelete != null) {
+                        onDeleteCity(cityToDelete)
+                        selectedCity = null
+                    }
+
+                }
+            )
+            {
+                Text("DELETE CITY")
             }
         }
     }
@@ -213,7 +243,8 @@ fun CityListScreenPreview() {
                 City("Calgary", "AB")
             ),
             onAddCity = {},
-            onUpdateCity = { _, _ -> }
+            onUpdateCity = { _, _ -> },
+            onDeleteCity = {}
         )
     }
 }
